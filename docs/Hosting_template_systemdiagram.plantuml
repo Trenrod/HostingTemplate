@@ -1,0 +1,21 @@
+@startuml Hosting template systemdiagram
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+Boundary(DeploymentServer, "Deployment Server", "Local", "", "", "Server from which this template is executed.") {
+	Container(DeploymentScript, "Deployment app", "NodeJS", "Deployment application uses Ansible to configure a remote host and deploy a webserver.")
+	Container(Ansible, "Ansible", "Ansible", "Ansible environment (Python/Docker) and ansible scripts to configure and deploy a webserver")
+	Rel(DeploymentScript, Ansible, "executes")
+}
+Boundary(Hosting, "Hosting Server", "Remote", "", "", "Server on which the webapp is hosted.") {
+	Container(Envoy, "Envoy", "Envoy", "TLS Handshake and reverse proxy")
+	Container(ACMESH, "ACME.sh", "ACME.sh", "Certificate generation and renewal")
+	Container(Cronjob, "Cronjob", "Cronjob", "Regular systemupdate and certificate renewal")
+	Container(YOURAPP, "YOUR APP HERE", "ANYTHING", "The actual web application")
+	Rel(Envoy, YOURAPP, "servs")
+	Rel_U(ACMESH, Envoy, "provides certificates")
+	Rel(Cronjob, ACMESH, "triggers")
+}
+Rel(Ansible, Hosting, "configures, provisioning")
+
+@enduml
