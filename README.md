@@ -1,6 +1,6 @@
 # Hosting template
 
-Simple and reliable hosting template.
+Simple, transparent and reliable service deployments.
 
 ## Feature roadmap
 
@@ -17,6 +17,9 @@ To Version 1.0.0: https://github.com/Trenrod/HostingTemplate/milestone/1
 - [ ] Configurable support for:
 	- [ ] Prometheus (metrics)
 	- [ ] Loki (logs)
+- [ ] TBD Cloud VM provisioning
+- [ ] TBD Loadbalancing
+- [ ] TBD Zero downtime deployment
 
 ## Requirements
 
