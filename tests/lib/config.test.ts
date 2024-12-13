@@ -1,4 +1,4 @@
-import { loadConfig, TConfig } from '../../lib/config';
+import { loadConfig, saveConfig, type TConfig } from '../../lib/config';
 import fs from 'fs';
 import {
 	describe, it
@@ -10,7 +10,7 @@ describe("/lib/config.ts", () => {
 
 	it('loadConfig - FileNotAccessible', async () => {
 		jest.spyOn(fs.promises, 'access').mockRejectedValue(new Error('File not accessible'));
-		const result = await loadConfig();
+		const result = await loadConfig("./test.json");
 		expect(result).toEqual({ error: "FileNotAccessible" });
 	});
 
@@ -18,10 +18,10 @@ describe("/lib/config.ts", () => {
 		jest.spyOn(fs.promises, 'access').mockResolvedValue();
 
 		jest.spyOn(fs.promises, 'readFile').mockResolvedValueOnce("xxxxx");
-		expect(loadConfig()).resolves.toEqual({ error: "InvalidContent" });
+		await expect(loadConfig("./test.json")).resolves.toEqual({ error: "InvalidContent" });
 
 		jest.spyOn(fs.promises, 'readFile').mockResolvedValue(JSON.stringify({ dns: "dnsTest", email1: "emailTest1", sshKeyPath: "pathTest1" }));
-		expect(loadConfig()).resolves.toEqual({ error: "InvalidContent" });
+		await expect(loadConfig("./test.json")).resolves.toEqual({ error: "InvalidContent" });
 	});
 
 	it('loadConfig - Success', async () => {
@@ -30,13 +30,29 @@ describe("/lib/config.ts", () => {
 		};
 		jest.spyOn(fs.promises, 'access').mockResolvedValue();
 		jest.spyOn(fs.promises, 'readFile').mockResolvedValue(JSON.stringify(config));
-		expect(loadConfig()).resolves.toEqual({ result: config });
+		await expect(loadConfig("./test.json")).resolves.toEqual({ result: config });
 	});
 
 	it('loadConfig - UnknownError', async () => {
 		jest.spyOn(fs.promises, 'access').mockResolvedValue();
 		jest.spyOn(fs.promises, 'readFile').mockRejectedValue(new Error("Unknown error"));
-		expect(loadConfig()).resolves.toEqual({ error: "UnknownError" });
+		await expect(loadConfig("./test.json")).resolves.toEqual({ error: "UnknownError" });
+	});
+
+	it('saveConfig - Success', async () => {
+		const config: TConfig = {
+			dns: "dnsTest", email: "emailTest1", sshKeyPath: "pathTest1"
+		};
+		jest.spyOn(fs.promises, 'writeFile').mockResolvedValue();
+		await expect(saveConfig("./test.json", config)).resolves.toEqual({ result: true });
+	});
+
+	it('saveConfig - UnknownError', async () => {
+		const config: TConfig = {
+			dns: "dnsTest", email: "emailTest1", sshKeyPath: "pathTest1"
+		};
+		jest.spyOn(fs.promises, 'writeFile').mockRejectedValue(new Error("Unknown error"));
+		await expect(saveConfig("./test.json", config)).resolves.toEqual({ error: "UnknownError" });
 	});
 })
 
