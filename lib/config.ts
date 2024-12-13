@@ -1,5 +1,5 @@
-import Ajv, { JTDDataType } from "ajv/dist/jtd"
-import { access, readFile } from "fs/promises"
+import Ajv, { type JTDDataType } from "ajv/dist/jtd"
+import { access, readFile, writeFile } from "fs/promises"
 const ajv = new Ajv()
 
 const schema = {
@@ -25,16 +25,14 @@ export type TConfig = JTDDataType<typeof schema>;
 // type inference is not supported for JTDDataType yet
 export const validateTConfig = ajv.compile<TConfig>(schema);
 
-// serialize will only accept data compatible with MyData
-const serializeTConfig = ajv.compileSerializer(schema);
+// serialize will only accept data compatible with TConfig
+export const serializeTConfig = ajv.compileSerializer(schema);
 
 // parse will return MyData or undefined
-const parseTConfig = ajv.compileParser<TConfig>(schema);
-
+export const parseTConfig = ajv.compileParser<TConfig>(schema);
 
 // Loads existing config
-export const loadConfig = async function(): Promise<{ error?: "FileNotAccessible" | "InvalidContent" | "UnknownError", result?: TConfig }> {
-	const configFilePath = "./htconfig.json";
+export const loadConfig = async function(configFilePath: string): Promise<{ error?: "FileNotAccessible" | "InvalidContent" | "UnknownError", result?: TConfig }> {
 	try {
 		try {
 			await access(configFilePath);
@@ -42,7 +40,7 @@ export const loadConfig = async function(): Promise<{ error?: "FileNotAccessible
 			return { error: "FileNotAccessible" };
 		}
 
-		const fileContent = await readFile("./", {
+		const fileContent = await readFile(configFilePath, {
 			encoding: "utf8"
 		});
 
@@ -58,3 +56,17 @@ export const loadConfig = async function(): Promise<{ error?: "FileNotAccessible
 	}
 }
 
+/**
+ * Stores/Overwrites existing configuration
+ * @param pathToConfig - Path to store the config
+ * @param newConfig - config to store
+ */
+export const saveConfig = async function(pathToConfig: string, newConfig: TConfig): Promise<{ error?: "UnknownError", result?: true }> {
+	try {
+		await writeFile(pathToConfig, serializeTConfig(newConfig));
+	} catch (error: unknown) {
+		console.error("Failed to store config.", error);
+		return { error: "UnknownError" };
+	}
+	return { result: true };
+}
