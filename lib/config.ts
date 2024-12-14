@@ -28,7 +28,7 @@ export const validateTConfig = ajv.compile<TConfig>(schema);
 // serialize will only accept data compatible with TConfig
 export const serializeTConfig = ajv.compileSerializer(schema);
 
-// parse will return MyData or undefined
+// parse will return TConfig or undefined
 export const parseTConfig = ajv.compileParser<TConfig>(schema);
 
 // Loads existing config

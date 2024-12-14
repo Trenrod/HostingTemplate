@@ -1,2 +1,4 @@
 node_modules
 coverage
+configs
+logs/*.log
