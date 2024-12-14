@@ -28,6 +28,7 @@
 		"@inquirer/prompts": "^7.2.0",
 		"ajv": "^8.17.1",
 		"commander": "^12.1.0",
-		"inquirer-toggle": "^1.0.1"
+		"inquirer-toggle": "^1.0.1",
+		"yaml": "^2.6.1"
 	}
 }

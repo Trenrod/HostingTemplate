@@ -5,24 +5,24 @@
 
 Simple, transparent and reliable service deployments.
 
-## Feature roadmap
+## [Develop](docs/Develop.md)
 
-To Version 1.0.0: https://github.com/Trenrod/HostingTemplate/milestone/1
+## [Roadmap](docs/Roadmap.md)
 
-### Version 1.0.0
-- [ ] Customized configuration generated over a cli
-- [ ] Deployment observer
-- [ ] Automatic certificates and renewal
+## Usage
 
-### Version X.0
-- [ ] Multiple servers support
-- [ ] Different roles per server support
-- [ ] Configurable support for:
-	- [ ] Prometheus (metrics)
-	- [ ] Loki (logs)
-- [ ] TBD Cloud VM provisioning
-- [ ] TBD Loadbalancing
-- [ ] TBD Zero downtime deployment
+### Genreate config
+Create a new config and store it in ./config_hello_world.json
+```shell
+npx tsx index.ts -- config generate ./config_hello_world.json
+```
+
+### Check endpoint
+Creates and executes ansible script to check the current state of the endpoint
+
+```shell
+npx tsx index.ts -- check ./config_hello_world.json
+```
 
 ## Requirements
 

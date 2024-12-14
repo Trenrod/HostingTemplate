@@ -1,6 +1,7 @@
 import { Command } from 'commander';
 import { generateConfig } from './lib/generateConfig';
 import { loadConfig } from './lib/config';
+import { applyCheck } from './lib/applyCheck';
 
 const program = new Command();
 
@@ -44,8 +45,10 @@ commandConfig
 program
 	.command("check")
 	.description("Checks endpoints and their configuration")
-	.action(() => {
-		console.log("Check enpoints - Not implemented");
+	.argument("<pathToConfig>", "Path to the configuration to use.")
+	.action((argPathToConfig: string) => {
+		console.log(`Configuration file used: ${argPathToConfig}`);
+		void applyCheck(argPathToConfig).catch((error: unknown) => { console.error("Unhandeled exception", error) });
 	});
 program
 	.command("deploy")

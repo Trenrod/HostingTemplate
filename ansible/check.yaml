@@ -1,0 +1,15 @@
+- name: Check
+  hosts: main
+  gather_facts: false
+
+  tasks:
+    - name: Ping host
+      ansible.builtin.ping:
+
+    - name: Gathering facts
+      ansible.builtin.setup:
+      register: gather_facts
+
+    - name: Output facts
+      ansible.builtin.debug:
+        var: gather_facts
