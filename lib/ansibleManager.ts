@@ -2,18 +2,17 @@ import { spawn } from 'node:child_process';
 import type { TConfig } from './config';
 import { writeFileSync } from 'node:fs';
 
+
 /**
  * Starts ansible to collect information from the host system
  * 
  * @returns ansible output
  */
-export const spawnAnsibleCheck = async function(config: TConfig): Promise<number | null> {
+export const spawnAnsible = async function(command: string, parameter: string[], dns: string): Promise<number | null> {
 	return await new Promise<number | null>((resolve, reject) => {
 		let exitCode: number | null = null;
 		let output = "";
 
-		const command = ".venv/bin/ansible-playbook";
-		const parameter = ["-i", "inventory.yaml", "check.yaml"]
 		const cwd = "./ansible";
 		console.log("Spawn process:");
 		console.log(`cd ${cwd}`);
@@ -33,11 +32,33 @@ export const spawnAnsibleCheck = async function(config: TConfig): Promise<number
 		});
 
 		ansibleProcess.on('close', (code) => {
-			const logPath = `./logs/${config.dns}-${new Date().toISOString()}.log`;
+			const logPath = `./logs/${dns}-${new Date().toISOString()}.log`;
 			writeFileSync(logPath, output);
 			console.log(`Logs stored at: ${logPath}`)
 			exitCode = code;
 			resolve(exitCode);
 		});
 	});
+}
+
+/**
+ * Starts deployment over ansible
+ * 
+ * @returns ansible output
+ */
+export const spawnAnsibleDeploy = async function(config: TConfig): Promise<number | null> {
+	const command = ".venv/bin/ansible-playbook";
+	const parameter = ["-i", "inventory.yaml", "deploy.yaml"]
+	return await spawnAnsible(command, parameter, config.dns);
+}
+
+/**
+ * Starts ansible to collect information from the host system
+ * 
+ * @returns ansible output
+ */
+export const spawnAnsibleCheck = async function(config: TConfig): Promise<number | null> {
+	const command = ".venv/bin/ansible-playbook";
+	const parameter = ["-i", "inventory.yaml", "check.yaml"]
+	return await spawnAnsible(command, parameter, config.dns);
 }

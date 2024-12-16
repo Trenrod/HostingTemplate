@@ -1,7 +1,7 @@
 import { Command } from 'commander';
 import { generateConfig } from './lib/generateConfig';
 import { loadConfig } from './lib/config';
-import { applyCheck } from './lib/applyCheck';
+import { applyCommandCheck, applyCommandDeploy } from './lib/commands';
 
 const program = new Command();
 
@@ -48,13 +48,31 @@ program
 	.argument("<pathToConfig>", "Path to the configuration to use.")
 	.action((argPathToConfig: string) => {
 		console.log(`Configuration file used: ${argPathToConfig}`);
-		void applyCheck(argPathToConfig).catch((error: unknown) => { console.error("Unhandeled exception", error) });
+		loadConfig(argPathToConfig)
+			.then(async (loadConfigResult) => {
+				if (loadConfigResult.result == null) {
+					return;
+				}
+				console.log("Configuration:", loadConfigResult.result);
+				await applyCommandCheck(loadConfigResult.result)
+			})
+			.catch((error: unknown) => { console.error("Unhandeled exception", error) });
 	});
 program
 	.command("deploy")
 	.description("Deploying")
-	.action(() => {
-		console.log("Deploying - Not implemented");
+	.argument("<pathToConfig>", "Path to the configuration to use.")
+	.action((argPathToConfig: string) => {
+		console.log(`Configuration file used: ${argPathToConfig}`);
+		loadConfig(argPathToConfig)
+			.then(async (loadConfigResult) => {
+				if (loadConfigResult.result == null) {
+					return;
+				}
+				console.log("Configuration:", loadConfigResult.result);
+				await applyCommandDeploy(loadConfigResult.result)
+			})
+			.catch((error: unknown) => { console.error("Unhandeled exception", error) });
 	});
 
 program.parse();

@@ -1,0 +1,18 @@
+---
+- name: "Install required system packages"
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: "present"
+    update_cache: true
+  loop: ["ufw"]
+  become: true
+
+- name: "Firewall with ssh, http and https"
+  community.general.ufw:
+    rule: allow
+    port: "{{ item }}"
+    proto: tcp
+  loop:
+    - "22"
+    - "80"
+    - "443"
