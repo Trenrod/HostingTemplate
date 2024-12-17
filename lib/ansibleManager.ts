@@ -46,9 +46,13 @@ export const spawnAnsible = async function(command: string, parameter: string[],
  * 
  * @returns ansible output
  */
-export const spawnAnsibleDeploy = async function(config: TConfig): Promise<number | null> {
+export const spawnAnsibleDeploy = async function(config: TConfig, updateServiceOnly?: true): Promise<number | null> {
 	const command = ".venv/bin/ansible-playbook";
 	const parameter = ["-i", "inventory.yaml", "deploy.yaml"]
+	if (updateServiceOnly) {
+		parameter.push("--tags")
+		parameter.push("update_service");
+	}
 	return await spawnAnsible(command, parameter, config.dns);
 }
 

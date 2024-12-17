@@ -11,17 +11,30 @@ Simple, transparent and reliable service deployments.
 
 ## Usage
 
-### Genreate config
+### Generate config
 Create a new config and store it in ./config_hello_world.json
 ```shell
-npx tsx index.ts -- config generate ./config_hello_world.json
+npx tsx index.ts config generate ./config_hello_world.json
 ```
 
 ### Check endpoint
 Creates and executes ansible script to check the current state of the endpoint
 
 ```shell
-npx tsx index.ts -- check ./config_hello_world.json
+npx tsx index.ts check ./config_hello_world.json
+```
+
+### Deploy
+Deploys initally all dependencies
+```shell
+npx tsx index.ts deploy ./config_hello_world.json
+```
+
+Deploys only new service image
+```shell
+npx tsx index.ts deploy --update-service-only ./configs/anonvoting.trenrod.ne
+# alternative
+# npx tsx index.ts deploy -u ./config_hello_world.json
 ```
 
 ## Requirements

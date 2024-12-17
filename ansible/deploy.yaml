@@ -3,6 +3,12 @@
   hosts: main
 
   tasks:
+    - name: "Upgrade system"
+      ansible.builtin.import_tasks: ./tasks/setup_upgrade_system.yaml
+      become: true
+      tags:
+        - deploy_initial
+
     - name: "Dev Sec - Security OS Hardening"
       ansible.builtin.include_role:
         name: devsec.hardening.os_hardening
@@ -11,20 +17,34 @@
         sysctl_overwrite:
           # Enable IPv4 traffic forwarding. For Docker
           net.ipv4.ip_forward: 1
+      tags:
+        - deploy_initial
 
     - name: "Setup unattended-upgrades"
       ansible.builtin.include_role:
         name: hifis.toolkit.unattended_upgrades
       vars:
         ansible_become: true
+      tags:
+        - deploy_initial
 
     - name: "Setup firewall"
       ansible.builtin.import_tasks: ./tasks/setup_firewall.yaml
       become: true
+      tags:
+        - deploy_initial
 
     - name: "Setup docker an docker-compose"
       ansible.builtin.import_tasks: ./tasks/setup_docker.yaml
       become: true
+      tags:
+        - deploy_initial
+
+    - name: "Setup certificates"
+      ansible.builtin.import_tasks: ./tasks/setup_certificates.yaml
+      become: true
+      tags:
+        - deploy_initial
 
     # vvv---- TODO
 
@@ -47,10 +67,6 @@
     # - name: "Update apt"
     #   ansible.builtin.apt:
     #     update_cache: yes
-    #   become: true
-
-    # - name: "Setup certificates"
-    #   ansible.builtin.import_tasks: ./tasks/setup_certificates.yaml
     #   become: true
 
     # - name: "Copy envoy script"
