@@ -1,0 +1,60 @@
+# Installs Docker and Docker-Compose on this VM
+- name: "Sets variables"
+  ansible.builtin.set_fact:
+    docker_url: "https://download.docker.com"
+
+- name: "Install required system packages"
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: "present"
+    update_cache: true
+  loop:
+    [
+      "apt-transport-https",
+      "ca-certificates",
+      "curl",
+      "software-properties-common",
+      "python3-pip",
+      "virtualenv",
+      "python3-setuptools",
+    ]
+
+- name: "Add Docker GPG apt Key"
+  ansible.builtin.apt_key:
+    url: https://{{ docker_url }}/linux/ubuntu/gpg
+    state: present
+
+- name: "Add Docker Repository"
+  ansible.builtin.apt_repository:
+    repo: "deb [arch=amd64] {{ docker_url }}/{{ ansible_system | lower }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable"
+    state: present
+
+- name: "Update apt packages"
+  ansible.builtin.apt:
+    update_cache: true
+
+- name: "Update apt and install docker-ce and docker-compose-plugin"
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: "present"
+    update_cache: false
+  loop:
+    [
+      "docker-ce",
+      "docker-ce-cli",
+      "containerd.io",
+      "docker-buildx-plugin",
+      "docker-compose-plugin",
+    ]
+
+# Workaround as we dont use python virtual environments on the VM
+- name: "Avoid PEP 668."
+  ansible.builtin.file:
+    path: /usr/lib/python3.11/EXTERNALLY-MANAGED
+    state: absent
+
+# I use strickt docker version as I failed hard last time i picket the latest by default
+- name: "Install Docker Module for Python"
+  ansible.builtin.pip:
+    name: "{{ item }}"
+  loop: ["docker", "requests"]

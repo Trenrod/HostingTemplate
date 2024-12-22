@@ -1,0 +1,31 @@
+services:
+  mainapp:
+    image: ghcr.io/trenrod/heritage-archive:{{image_version}}
+    ports:
+      - 8008:8008
+    volumes:
+      - database:/app/database:rw
+      - images:/usr/local/heritagearchive/images:rw
+    container_name: heritage-archive
+    restart: unless-stopped
+
+  envoy:
+    image: envoyproxy/envoy:v1.31-latest
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - 443:443
+    depends_on:
+      - mainapp
+    volumes:
+      - "{{user_dir}}/envoy.yaml:/etc/envoy/envoy.yaml"
+      - /etc/ssl/certs/{{domain}}/server.key:/etc/envoy/certs/serverkey.pem
+      - /etc/ssl/certs/{{domain}}/serverfullchain.crt:/etc/envoy/certs/servercert.pem
+    container_name: envoy
+    restart: unless-stopped
+    links:
+      - mainapp
+
+volumes:
+  database:
+  images:
