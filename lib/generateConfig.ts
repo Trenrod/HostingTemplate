@@ -28,11 +28,11 @@ const loadAndValidateConfig = async function(pathToConfig: string): Promise<unde
 export const generateConfig = async function(pathToConfig: string): Promise<void> {
 	const config = await loadAndValidateConfig(pathToConfig);
 
-	const dns = await input({ message: 'DNS of the service. To create certificates for.', default: config?.dns });
+	const fqdn = await input({ message: 'FQDN of the service. To create certificates for.', default: config?.fqdn });
 	const email = await input({ message: 'Your email for Let`s encrypt.', default: config?.email });
 	const sshKeyPath = await input({ message: 'Path to the ssh key to connect to your host.', default: config?.sshKeyPath });
 
-	const newConfig: TConfig = { dns, email, sshKeyPath };
+	const newConfig: TConfig = { fqdn, email, sshKeyPath };
 
 	await saveConfig(pathToConfig, newConfig);
 	console.log(`New config stored to: ${pathToConfig}`);

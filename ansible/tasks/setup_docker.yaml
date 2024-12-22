@@ -1,4 +1,7 @@
 # Installs Docker and Docker-Compose on this VM
+- name: "Sets variables"
+  ansible.builtin.set_fact:
+    docker_url: "https://download.docker.com"
 
 - name: "Install required system packages"
   ansible.builtin.apt:
@@ -18,17 +21,17 @@
 
 - name: "Add Docker GPG apt Key"
   ansible.builtin.apt_key:
-    url: https://download.docker.com/linux/ubuntu/gpg
+    url: https://{{ docker_url }}/linux/ubuntu/gpg
     state: present
 
 - name: "Add Docker Repository"
   ansible.builtin.apt_repository:
-    repo: "deb [arch=amd64] https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable"
+    repo: "deb [arch=amd64] {{ docker_url }}/{{ ansible_system | lower }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable"
     state: present
 
 - name: "Update apt packages"
   ansible.builtin.apt:
-    update_cache: yes
+    update_cache: true
 
 - name: "Update apt and install docker-ce and docker-compose-plugin"
   ansible.builtin.apt:

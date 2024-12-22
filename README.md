@@ -5,6 +5,22 @@
 
 Simple, transparent and reliable service deployments.
 
+## Requirements
+
+### Docker images
+- All docker images must have an user called `unprivileged`
+
+### Hosting platform
+- SSH access to host system over private key
+- Debian based host system
+
+### DNS
+- DNS A record
+
+### Deployment server
+- NodeJS environment
+- Ansible environment
+
 ## [Develop](docs/Develop.md)
 
 ## [Roadmap](docs/Roadmap.md)
@@ -32,17 +48,10 @@ npx tsx index.ts deploy ./config_hello_world.json
 
 Deploys only new service image
 ```shell
-npx tsx index.ts deploy --update-service-only ./configs/anonvoting.trenrod.ne
+npx tsx index.ts deploy --update-service-only ./configs/anonvoting.trenrod.net
 # alternative
 # npx tsx index.ts deploy -u ./config_hello_world.json
 ```
-
-## Requirements
-
-- SSH access
-- DNS A record
-- Python
-- NodeJS
 
 ## Tech stack
 

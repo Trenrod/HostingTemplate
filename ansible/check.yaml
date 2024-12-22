@@ -1,15 +1,15 @@
 - name: Check
   hosts: main
-  gather_facts: false
+  gather_facts: true
 
   tasks:
     - name: Ping host
       ansible.builtin.ping:
 
-    - name: Gathering facts
-      ansible.builtin.setup:
-      register: gather_facts
-
     - name: Output facts
       ansible.builtin.debug:
         var: gather_facts
+
+    - name: "Apply docker bench security"
+      ansible.builtin.import_tasks: "./tasks/execute_docker-bench-security.yaml"
+      become: true

@@ -4,7 +4,7 @@ const ajv = new Ajv()
 
 const schema = {
 	properties: {
-		dns: {
+		fqdn: {
 			type: "string",
 			// format: "hostname"
 		},

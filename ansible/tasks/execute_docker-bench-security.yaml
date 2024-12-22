@@ -1,0 +1,35 @@
+# Applies checks on the host system and all running docker containers
+# Source: https://github.com/docker/docker-bench-security
+
+---
+- name: "Set variables for execute_docker-bench-security.yaml"
+  ansible.builtin.set_fact:
+    docker_bench_sec_dir: "/tmp/docker-bench-security"
+
+- name: "Delete checkout dir if already exists"
+  ansible.builtin.file:
+    path: "{{ docker_bench_sec_dir }}"
+    state: absent
+
+- name: "Checkout https://github.com/docker/docker-bench-security to temp"
+  ansible.builtin.git:
+    repo: "https://github.com/docker/docker-bench-security"
+    dest: "{{ docker_bench_sec_dir }}"
+    version: "master"
+
+- name: "Execute docker bench security"
+  ansible.builtin.command: "./docker-bench-security.sh"
+  args:
+    chdir: "{{ docker_bench_sec_dir }}"
+  changed_when: false
+
+- name: "Store security result on deployment server"
+  ansible.builtin.fetch:
+    src: "{{ docker_bench_sec_dir }}/log/docker-bench-security.log.json"
+    dest: "./log/{{ fqdn }}-{{ timestamp_readable }}-docker-bench-security.log.json"
+    flat: true
+
+- name: "Delete checkout dir if already exists"
+  ansible.builtin.file:
+    path: "{{ docker_bench_sec_dir }}"
+    state: absent

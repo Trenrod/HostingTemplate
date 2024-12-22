@@ -1,4 +1,5 @@
 # Installs acme.sh and downloads certificates
+---
 - name: "Install crontab to create a cronjob for renewal"
   ansible.builtin.apt:
     name: "cron"
@@ -16,12 +17,12 @@
 - name: "Request to generate certificates"
   ansible.builtin.shell: >
     ./acme.sh --issue --standalone
-    --email {{email}}
-    -d {{domain}}
-    --cert-file /etc/ssl/certs/{{domain}}/servercert.pem
-    --key-file /etc/ssl/certs/{{domain}}/server.key
-    --ca-file /etc/ssl/certs/{{domain}}/serverca.crt
-    --fullchain-file /etc/ssl/certs/{{domain}}/serverfullchain.crt
+    --email {{ email }}
+    -d {{ domain }}
+    --cert-file /etc/ssl/certs/{{ domain }}/servercert.pem
+    --key-file /etc/ssl/certs/{{ domain }}/server.key
+    --ca-file /etc/ssl/certs/{{ domain }}/serverca.crt
+    --fullchain-file /etc/ssl/certs/{{ domain }}/serverfullchain.crt
     --force
   register: generate_certificates_result
   ignore_errors: true
@@ -29,10 +30,14 @@
   become: true
 
 - name: "Fail if request failed with non 'Domains not changed' error"
-  ansible.builtin.fail: msg="Certificates failed with error above"
+  ansible.builtin.fail:
+    msg: "Certificates failed with error above"
   when: "generate_certificates_result.rc != 0 and 'Domains not changed' not in generate_certificates_result.stdout"
   become: true
 
-- name: "Make all certificates readable"
-  ansible.builtin.shell: chmod 644 /etc/ssl/certs/family.lostplace.cc/*
+- name: "Make all certificates readable. TODO fix changed_when"
+  ansible.builtin.shell: "chmod 644 /etc/ssl/certs/{{ domain }}/*"
+  register: register_cert_access_changed
+  changed_when: "register_cert_access_changed.rc != 0"
+  when: "generate_certificates_result.rc == 0"
   become: true

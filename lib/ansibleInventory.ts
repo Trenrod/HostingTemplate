@@ -23,7 +23,7 @@ export const generateAnsibleInventoryFile = async function(config: TConfig): Pro
 		ungrouped: {
 			hosts: {
 				main: {
-					ansible_host: config.dns,
+					ansible_host: config.fqdn,
 					ansible_ssh_private_key_file: config.sshKeyPath
 				}
 			}

@@ -1,18 +1,14 @@
 # Feature roadmap
 
-To Version 1.0.0: https://github.com/Trenrod/HostingTemplate/milestone/1
+## 1.0.0
 
-## Version 1.0.0
-- [ ] Customized configuration generated over a cli
-- [ ] Deployment observer
-- [ ] Automatic certificates and renewal
+- [ ] https://github.com/Trenrod/HostingTemplate/milestone/1
 
-## Version X.0
-- [ ] Multiple servers support
-- [ ] Different roles per server support
-- [ ] Configurable support for:
-	- [ ] Prometheus (metrics)
-	- [ ] Loki (logs)
-- [ ] TBD Cloud VM provisioning
-- [ ] TBD Loadbalancing
-- [ ] TBD Zero downtime deployment
+### Focus
+- Webapplication hosting
+- CLI Wizard
+- Security (Thanks to  https://www.youtube.com/watch?v=KINjI1tlo2w)
+	- Automate system security update
+	- Automate certificate management
+	- Apply checks to fullfill https://github.com/docker/docker-bench-security
+- Default and custom docker compose

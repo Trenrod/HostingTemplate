@@ -8,7 +8,7 @@ import { writeFileSync } from 'node:fs';
  * 
  * @returns ansible output
  */
-export const spawnAnsible = async function(command: string, parameter: string[], dns: string): Promise<number | null> {
+export const spawnAnsible = async function(command: string, parameter: string[], fqdn: string): Promise<number | null> {
 	return await new Promise<number | null>((resolve, reject) => {
 		let exitCode: number | null = null;
 		let output = "";
@@ -32,7 +32,7 @@ export const spawnAnsible = async function(command: string, parameter: string[],
 		});
 
 		ansibleProcess.on('close', (code) => {
-			const logPath = `./logs/${dns}-${new Date().toISOString()}.log`;
+			const logPath = `./logs/${fqdn}-${new Date().toISOString()}.log`;
 			writeFileSync(logPath, output);
 			console.log(`Logs stored at: ${logPath}`)
 			exitCode = code;
@@ -48,12 +48,16 @@ export const spawnAnsible = async function(command: string, parameter: string[],
  */
 export const spawnAnsibleDeploy = async function(config: TConfig, updateServiceOnly?: true): Promise<number | null> {
 	const command = ".venv/bin/ansible-playbook";
-	const parameter = ["-i", "inventory.yaml", "deploy.yaml"]
+	const parameter = ["-i", "inventory.yaml"]
+	// Variables
+	parameter.push("--extra-vars");
+	parameter.push(`fqdn=${config.fqdn}`);
 	if (updateServiceOnly) {
 		parameter.push("--tags")
 		parameter.push("update_service");
 	}
-	return await spawnAnsible(command, parameter, config.dns);
+	parameter.push("deploy.yaml");
+	return await spawnAnsible(command, parameter, config.fqdn);
 }
 
 /**
@@ -64,5 +68,5 @@ export const spawnAnsibleDeploy = async function(config: TConfig, updateServiceO
 export const spawnAnsibleCheck = async function(config: TConfig): Promise<number | null> {
 	const command = ".venv/bin/ansible-playbook";
 	const parameter = ["-i", "inventory.yaml", "check.yaml"]
-	return await spawnAnsible(command, parameter, config.dns);
+	return await spawnAnsible(command, parameter, config.fqdn);
 }

@@ -1,0 +1,6 @@
+# Checks all required variables are defined
+---
+- name: "Check if fqdn is defined"
+  ansible.builtin.fail:
+    msg: "The variable 'fqdn' is not defined."
+  when: fqdn is not defined

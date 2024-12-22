@@ -1,3 +1,5 @@
+# Setups basic firewall.
+# Mainly allow only 22 (ssh), 443 (https), 80 (http for certificate validation)
 ---
 - name: "Install required system packages"
   ansible.builtin.apt:
