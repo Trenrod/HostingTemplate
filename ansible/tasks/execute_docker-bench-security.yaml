@@ -29,7 +29,7 @@
     dest: "./log/{{ fqdn }}-{{ timestamp_readable }}-docker-bench-security.log.json"
     flat: true
 
-- name: "Delete checkout dir if already exists"
+- name: "Delete docker bench sec checkout dir if already exists"
   ansible.builtin.file:
     path: "{{ docker_bench_sec_dir }}"
     state: absent
