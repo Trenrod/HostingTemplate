@@ -1,3 +1,9 @@
+# [Work in progress]
+
+This project is in alpha state.
+- [Tasks to milestone 1.0.0](https://github.com/Trenrod/HostingTemplate/milestone/1)
+- [Roadmap](docs/Roadmap.md)
+
 # Hosting template
 
 [![License: MIT](https://cdn.prod.website-files.com/5e0f1144930a8bc8aace526c/65dd9eb5aaca434fac4f1c34_License-MIT-blue.svg)](/LICENSE)

@@ -1,0 +1,39 @@
+# Installes and executes lynis
+# Stores results
+---
+- name: "Set variables for execute_lynis.yaml"
+  ansible.builtin.set_fact:
+    lynis_working_dir: "/tmp/lynis"
+
+- name: "Delete checkout dir if already exists"
+  ansible.builtin.file:
+    path: "{{ lynis_working_dir }}"
+    state: absent
+
+- name: "Checkout https://github.com/CISOfy/lynis to temp"
+  ansible.builtin.git:
+    repo: "https://github.com/CISOfy/lynis"
+    dest: "{{ lynis_working_dir }}"
+    version: "master"
+
+- name: "Execute lynis"
+  ansible.builtin.command: "./lynis audit system"
+  args:
+    chdir: "{{ lynis_working_dir }}"
+  changed_when: false
+  become: true
+
+- name: "Store lynis check result on deployment server"
+  ansible.builtin.fetch:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    flat: true
+  loop:
+    - src: "/var/log/lynis.log"
+      dest: "./log/{{ fqdn }}-{{ timestamp_readable }}-lynis.log"
+    - src: "/var/log/lynis-report.dat"
+      dest: "./log/{{ fqdn }}-{{ timestamp_readable }}-lynis-report.dat"
+# - name: "Delete checkout dir if already exists"
+#   ansible.builtin.file:
+#     path: "{{ lynis_working_dir }}"
+#     state: absent
