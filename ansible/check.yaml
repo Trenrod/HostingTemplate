@@ -3,13 +3,24 @@
   gather_facts: true
 
   tasks:
+    - name: "Set variables"
+      ansible.builtin.set_fact:
+        timestamp_readable: "{{ lookup('pipe', 'date +%Y%m%d%H%M%S') }}"
+      tags:
+        - always
+
+    - name: "Checks required variables are defined"
+      ansible.builtin.import_tasks: ./tasks/checks_deploy_variables.yaml
+      tags:
+        - always
+
     - name: Ping host
       ansible.builtin.ping:
 
-    - name: Output facts
-      ansible.builtin.debug:
-        var: gather_facts
-
     - name: "Apply docker bench security"
       ansible.builtin.import_tasks: "./tasks/execute_docker-bench-security.yaml"
+      become: true
+
+    - name: "Apply lynis"
+      ansible.builtin.import_tasks: "./tasks/execute_lynis.yaml"
       become: true

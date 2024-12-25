@@ -67,6 +67,11 @@ export const spawnAnsibleDeploy = async function(config: TConfig, updateServiceO
  */
 export const spawnAnsibleCheck = async function(config: TConfig): Promise<number | null> {
 	const command = ".venv/bin/ansible-playbook";
-	const parameter = ["-i", "inventory.yaml", "check.yaml"]
+	const parameter = ["-i", "inventory.yaml"]
+	// Variables
+	parameter.push("--extra-vars");
+	parameter.push(`fqdn=${config.fqdn}`);
+
+	parameter.push("check.yaml");
 	return await spawnAnsible(command, parameter, config.fqdn);
 }
