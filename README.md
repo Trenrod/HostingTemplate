@@ -11,13 +11,46 @@ This project is in alpha state.
 
 Simple, transparent and reliable service deployments.
 
+## Usage
+
+### Step: 1 Generate step by step config file
+```sh
+npx tsx index.ts config init ./config_hello_world.json
+```
+
+### Step: 2 Provision host
+```sh
+npx tsx index.ts provision ./config_hello_world.json
+```
+
+### Step: 3 Update new version
+```shell
+npx tsx index.ts update ./configs/anonvoting.trenrod.net
+```
+
+### (Optional) Show config
+```shell
+npx tsx index.ts config show ./config_hello_world.json
+```
+
+### (Optional) Update config (same as create new one)
+```shell
+npx tsx index.ts config init ./config_hello_world.json
+```
+
+### (Optional) Execute audits
+```shell
+npx tsx index.ts audit ./config_hello_world.json
+```
+
+
 ## Main features
 
 Security
 - [x] Apply [DevSec Security OS Hardening](https://github.com/dev-sec/ansible-collection-hardening)
 - [x] [Automate security updates using unattended-upgrades](https://galaxy.ansible.com/ui/repo/published/hifis/toolkit/content/role/unattended_upgrades/)
 - [x] Applies audits for each iniital setup
-	- [x] [Audit Lynis audit](https://cisofy.com/lynis/#introduction) (Score: 77/100) on Debian 12
+	- [x] [Lynis audit](https://cisofy.com/lynis/#introduction) (Score: 77/100) on Debian 12
 	- [x] [Docker bench security](https://github.com/docker/docker-bench-security) (Score: 29/100) on Debian 12
 - [x] Install/Configure [Linux auditd framework](https://linux.die.net/man/8/auditd)
 - [x] Applies patches according to Audit results `./ansible/tasks/security/*.yaml`
@@ -46,34 +79,6 @@ Application
 ## [Develop](docs/Develop.md)
 
 ## [Roadmap](docs/Roadmap.md)
-
-## Usage
-
-### Generate config
-Create a new config and store it in ./config_hello_world.json
-```shell
-npx tsx index.ts config generate ./config_hello_world.json
-```
-
-### Check endpoint
-Creates and executes ansible script to check the current state of the endpoint
-
-```shell
-npx tsx index.ts check ./config_hello_world.json
-```
-
-### Deploy
-Deploys initally all dependencies
-```shell
-npx tsx index.ts deploy ./config_hello_world.json
-```
-
-Deploys only new service image
-```shell
-npx tsx index.ts deploy --update-service-only ./configs/anonvoting.trenrod.net
-# alternative
-# npx tsx index.ts deploy -u ./config_hello_world.json
-```
 
 ## Tech stack
 

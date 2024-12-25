@@ -5,19 +5,29 @@
     - name: "Set variables"
       ansible.builtin.set_fact:
         timestamp_readable: "{{ lookup('pipe', 'date +%Y%m%d%H%M%S') }}"
-      tags:
-        - always
 
     - name: "Checks required variables are defined"
       ansible.builtin.import_tasks: ./tasks/checks_deploy_variables.yaml
-      tags:
-        - always
 
     - name: "Upgrade system"
       ansible.builtin.import_tasks: ./tasks/setup_upgrade_system.yaml
       become: true
-      tags:
-        - deploy_initial
+
+    - name: "Setup firewall"
+      ansible.builtin.import_tasks: ./tasks/setup_firewall.yaml
+      become: true
+
+    - name: "Setup docker an docker-compose"
+      ansible.builtin.import_tasks: ./tasks/setup_docker.yaml
+      become: true
+
+    - name: "Setup auditd"
+      ansible.builtin.import_tasks: "./tasks/setup_auditd.yaml"
+      become: true
+
+    - name: "Apply all security specific configuration changes"
+      ansible.builtin.import_tasks: "./tasks/apply_security.yaml"
+      become: true
 
     - name: "Dev Sec - Security OS Hardening"
       ansible.builtin.include_role:
@@ -27,39 +37,18 @@
         sysctl_overwrite:
           # Enable IPv4 traffic forwarding. For Docker
           net.ipv4.ip_forward: 1
-      tags:
-        - deploy_initial
 
     - name: "Setup unattended-upgrades"
       ansible.builtin.include_role:
         name: hifis.toolkit.unattended_upgrades
       vars:
         ansible_become: true
-      tags:
-        - deploy_initial
-
-    - name: "Setup firewall"
-      ansible.builtin.import_tasks: ./tasks/setup_firewall.yaml
-      become: true
-      tags:
-        - deploy_initial
-
-    - name: "Setup docker an docker-compose"
-      ansible.builtin.import_tasks: ./tasks/setup_docker.yaml
-      become: true
-      tags:
-        - deploy_initial
-
-    - name: "Setup certificates"
-      ansible.builtin.import_tasks: "./tasks/setup_certificates.yaml"
-      become: true
-      tags:
-        - deploy_initial
-
-      # tags:
-      #   - deploy_initial
 
     # vvv---- TODO
+
+    # - name: "Setup certificates"
+    #   ansible.builtin.import_tasks: "./tasks/setup_certificates.yaml"
+    #   become: true
 
     # - name: "Load variables"
     #   ansible.builtin.include_vars: "variables.yaml"

@@ -1,14 +1,14 @@
 import { Command } from 'commander';
 import { generateConfig } from './lib/generateConfig';
 import { loadConfig } from './lib/config';
-import { applyCommandCheck, applyCommandDeploy } from './lib/commands';
+import { applyCommandAudit, applyCommandProvision, applyCommandUpdate } from './lib/commands';
 
 const program = new Command();
 
 program
 	.name('hosting-template')
 	.description('CLI to generate and manage hostings')
-	.version('0.0.0');
+	.version('0.0.0-alpha');
 
 const commandConfig = program
 	.command('config')
@@ -32,9 +32,10 @@ commandConfig
 			console.log(JSON.stringify(config.result, null, tabSize));
 		}
 	});
+
 // Generates or updates existing config
 commandConfig
-	.command("generate")
+	.command("init")
 	.description("Generates or updates existing configuration.")
 	.argument("<pathToConfig>", "Path to the configuration to use.")
 	.action((argPathToConfig: string) => {
@@ -42,9 +43,45 @@ commandConfig
 		void generateConfig(argPathToConfig).catch((error: unknown) => { console.error("Unhandeled exception", error); });
 	});
 
+// Deploys a service
+program
+	.command("provision")
+	.description("Provision host")
+	.argument("<pathToConfig>", "Path to the configuration to use.")
+	.action((argPathToConfig: string) => {
+		console.log(`Configuration file used: ${argPathToConfig}`);
+		loadConfig(argPathToConfig)
+			.then(async (loadConfigResult) => {
+				if (loadConfigResult.result == null) {
+					return;
+				}
+				console.log("Configuration:", loadConfigResult.result);
+				await applyCommandProvision(loadConfigResult.result);
+			})
+			.catch((error: unknown) => { console.error("Unhandeled exception", error) });
+	});
+
+// Update a service only
+program
+	.command("update")
+	.description("Update provisioned services")
+	.argument("<pathToConfig>", "Path to the configuration to use.")
+	.action((argPathToConfig: string) => {
+		console.log(`Configuration file used: ${argPathToConfig}`);
+		loadConfig(argPathToConfig)
+			.then(async (loadConfigResult) => {
+				if (loadConfigResult.result == null) {
+					return;
+				}
+				console.log("Configuration:", loadConfigResult.result);
+				await applyCommandUpdate(loadConfigResult.result);
+			})
+			.catch((error: unknown) => { console.error("Unhandeled exception", error) });
+	});
+
 // Collect information about endpoints
 program
-	.command("check")
+	.command("audit")
 	.description("Checks endpoints and their configuration")
 	.argument("<pathToConfig>", "Path to the configuration to use.")
 	.action((argPathToConfig: string) => {
@@ -55,25 +92,7 @@ program
 					return;
 				}
 				console.log("Configuration:", loadConfigResult.result);
-				await applyCommandCheck(loadConfigResult.result)
-			})
-			.catch((error: unknown) => { console.error("Unhandeled exception", error) });
-	});
-// Deploys a service
-program
-	.command("deploy")
-	.description("Deploying")
-	.argument("<pathToConfig>", "Path to the configuration to use.")
-	.option('-u, --update-service-only', "Updates the service only. Skips inital setup.")
-	.action((argPathToConfig: string, options: { updateServiceOnly?: true }) => {
-		console.log(`Configuration file used: ${argPathToConfig}`, options);
-		loadConfig(argPathToConfig)
-			.then(async (loadConfigResult) => {
-				if (loadConfigResult.result == null) {
-					return;
-				}
-				console.log("Configuration:", loadConfigResult.result);
-				await applyCommandDeploy(loadConfigResult.result, options.updateServiceOnly)
+				await applyCommandAudit(loadConfigResult.result)
 			})
 			.catch((error: unknown) => { console.error("Unhandeled exception", error) });
 	});
