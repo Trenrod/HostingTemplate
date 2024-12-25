@@ -1,0 +1,5 @@
+# Apply all security checks
+---
+- name: "Applies sshd config changes to improve security"
+  ansible.builtin.import_tasks: ./tasks/security_host_hardening/security_sshd_config.yaml
+  register: register_security_ssh_config

@@ -33,7 +33,8 @@
       dest: "./log/{{ fqdn }}-{{ timestamp_readable }}-lynis.log"
     - src: "/var/log/lynis-report.dat"
       dest: "./log/{{ fqdn }}-{{ timestamp_readable }}-lynis-report.dat"
-# - name: "Delete checkout dir if already exists"
-#   ansible.builtin.file:
-#     path: "{{ lynis_working_dir }}"
-#     state: absent
+
+- name: "Delete lynis checkout dir if already exists"
+  ansible.builtin.file:
+    path: "{{ lynis_working_dir }}"
+    state: absent

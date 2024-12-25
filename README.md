@@ -11,6 +11,22 @@ This project is in alpha state.
 
 Simple, transparent and reliable service deployments.
 
+## Main features
+
+Security
+- [x] Apply [DevSec Security OS Hardening](https://github.com/dev-sec/ansible-collection-hardening)
+- [x] [Automate security updates using unattended-upgrades](https://galaxy.ansible.com/ui/repo/published/hifis/toolkit/content/role/unattended_upgrades/)
+- [x] Applies audits for each iniital setup
+	- [x] [Audit Lynis audit](https://cisofy.com/lynis/#introduction) (Score: 77/100) on Debian 12
+	- [x] [Docker bench security](https://github.com/docker/docker-bench-security) (Score: 29/100) on Debian 12
+- [x] Install/Configure [Linux auditd framework](https://linux.die.net/man/8/auditd)
+- [x] Applies patches according to Audit results `./ansible/tasks/security/*.yaml`
+
+Application
+- [ ] Deploys custom compose or compose templates
+- [ ] Preconfigures Envoy
+- [ ] Creates and renews certificiates with [acme.sh](https://github.com/acmesh-official/acme.sh)
+
 ## Requirements
 
 ### Docker images

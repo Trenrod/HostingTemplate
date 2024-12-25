@@ -1,0 +1,35 @@
+# Installs auditd - The Linux Audit daemon
+---
+- name: "Installs auditd"
+  ansible.builtin.apt:
+    name: "auditd"
+    state: "present"
+    update_cache: true
+
+- name: "Make sure auditd is enabled on startup"
+  ansible.builtin.systemd_service:
+    name: "auditd"
+    state: started
+    enabled: true
+
+- name: "Apply audit rules for docker"
+  ansible.builtin.command: "auditctl -w {{ item }} -k docker"
+  changed_when: false
+  register: register_apply_auditd_rule
+  failed_when: "'Error sending add rule data request (Rule exists)' not in register_apply_auditd_rule.stderr"
+  loop:
+    - "/usr/bin/dockerd"
+    - "/run/containerd"
+    - "/var/lib/docker"
+    - "/etc/docker"
+    - "/lib/systemd/system/docker.service"
+    - "/run/containerd/containerd.sock"
+    - "/lib/systemd/system/docker.socket"
+    - "/etc/default/docker"
+    - "/etc/docker/daemon.json"
+    - "/etc/containerd/config.toml"
+    - "/usr/bin/containerd"
+    - "/usr/bin/containerd-shim"
+    - "/usr/bin/containerd-shim-runc-v1"
+    - "/usr/bin/containerd-shim-runc-v2"
+    - "/usr/bin/runc"

@@ -17,6 +17,14 @@
     - name: Ping host
       ansible.builtin.ping:
 
+    - name: "Setup auditd"
+      ansible.builtin.import_tasks: "./tasks/setup_auditd.yaml"
+      become: true
+
+    - name: "Apply all security specific configuration changes"
+      ansible.builtin.import_tasks: "./tasks/apply_security.yaml"
+      become: true
+
     - name: "Apply docker bench security"
       ansible.builtin.import_tasks: "./tasks/execute_docker-bench-security.yaml"
       become: true

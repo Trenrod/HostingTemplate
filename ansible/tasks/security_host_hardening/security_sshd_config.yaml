@@ -1,0 +1,45 @@
+# Applies some best practices to sshd_config
+#
+# - LogLevel to VERBOSE: To get most informations for Auditing
+# - LoginGraceTime 60s: Limits time for unauthorized users to attempt accessing the system, reducing window for brute force attacks.
+# - PermitRootLogin no: Dont allow root login
+# - MaxAuthTries to 2: limiting failed login attempts, thus reducing the risk of brute force attacks.
+# - PasswordAuthentication to no: preventing the use of passwords, thus reducing the risk of brute force attacks.
+# - PublickeyAuthentication to yes: reducing the risk of brute force attacks compared to password-based authentication.
+
+---
+- name: "Set LogLevel to VERBOSE"
+  ansible.builtin.replace:
+    path: /etc/ssh/sshd_config
+    regexp: '^#?LogLevel\s.*$'
+    replace: "LogLevel VERBOSE"
+
+- name: "Set LoginGraceTime to 60s"
+  ansible.builtin.replace:
+    path: /etc/ssh/sshd_config
+    regexp: '^#?LoginGraceTime\s.*$'
+    replace: "LoginGraceTime 60s"
+
+- name: "Set PermitRootLogin to no"
+  ansible.builtin.replace:
+    path: /etc/ssh/sshd_config
+    regexp: '^#?PermitRootLogin\s.*$'
+    replace: "PermitRootLogin no"
+
+- name: "Set MaxAuthTries to 2"
+  ansible.builtin.replace:
+    path: /etc/ssh/sshd_config
+    regexp: '^#?MaxAuthTries\s.*$'
+    replace: "MaxAuthTries 2"
+
+- name: "Set PasswordAuthentication to no"
+  ansible.builtin.replace:
+    path: /etc/ssh/sshd_config
+    regexp: '^#?PasswordAuthentication\s.*$'
+    replace: "PasswordAuthentication no"
+
+- name: "Set PublickeyAuthentication to yes"
+  ansible.builtin.replace:
+    path: /etc/ssh/sshd_config
+    regexp: '^#?PublickeyAuthentication\s.*$'
+    replace: "PublickeyAuthentication yes"
