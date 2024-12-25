@@ -1,6 +1,6 @@
 import { spawn } from 'node:child_process';
 import type { TConfig } from './config';
-import { writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 
 
 /**
@@ -32,7 +32,11 @@ export const spawnAnsible = async function(command: string, parameter: string[],
 		});
 
 		ansibleProcess.on('close', (code) => {
-			const logPath = `./logs/${fqdn}-${new Date().toISOString()}.log`;
+			// Create log directory if not exists
+			if (!existsSync("./logs/")) {
+				mkdirSync("./logs/");
+			}
+			const logPath = `./logs/ansible-${fqdn}-${new Date().toISOString()}.log`;
 			writeFileSync(logPath, output);
 			console.log(`Logs stored at: ${logPath}`)
 			exitCode = code;
@@ -46,17 +50,29 @@ export const spawnAnsible = async function(command: string, parameter: string[],
  * 
  * @returns ansible output
  */
-export const spawnAnsibleDeploy = async function(config: TConfig, updateServiceOnly?: true): Promise<number | null> {
+export const spawnAnsibleProvision = async function(config: TConfig): Promise<number | null> {
 	const command = ".venv/bin/ansible-playbook";
 	const parameter = ["-i", "inventory.yaml"]
 	// Variables
 	parameter.push("--extra-vars");
 	parameter.push(`fqdn=${config.fqdn}`);
-	if (updateServiceOnly) {
-		parameter.push("--tags")
-		parameter.push("update_service");
-	}
-	parameter.push("deploy.yaml");
+	parameter.push("provision.yaml");
+	return await spawnAnsible(command, parameter, config.fqdn);
+}
+
+/**
+ * Updates service on a provisioned host
+ * 
+ * @returns ansible output
+ */
+export const spawnAnsibleUpdate = async function(config: TConfig): Promise<number | null> {
+	const command = ".venv/bin/ansible-playbook";
+	const parameter = ["-i", "inventory.yaml"]
+	// Variables
+	parameter.push("--extra-vars");
+	parameter.push(`fqdn=${config.fqdn}`);
+
+	parameter.push("update.yaml");
 	return await spawnAnsible(command, parameter, config.fqdn);
 }
 
@@ -65,13 +81,13 @@ export const spawnAnsibleDeploy = async function(config: TConfig, updateServiceO
  * 
  * @returns ansible output
  */
-export const spawnAnsibleCheck = async function(config: TConfig): Promise<number | null> {
+export const spawnAnsibleAudit = async function(config: TConfig): Promise<number | null> {
 	const command = ".venv/bin/ansible-playbook";
 	const parameter = ["-i", "inventory.yaml"]
 	// Variables
 	parameter.push("--extra-vars");
 	parameter.push(`fqdn=${config.fqdn}`);
 
-	parameter.push("check.yaml");
+	parameter.push("audit.yaml");
 	return await spawnAnsible(command, parameter, config.fqdn);
 }
