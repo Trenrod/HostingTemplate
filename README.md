@@ -2,14 +2,13 @@
 
 This project is in alpha state.
 - [Tasks to milestone 1.0.0](https://github.com/Trenrod/HostingTemplate/milestone/1)
-- [Roadmap](docs/Roadmap.md)
 
 # Hosting template
 
 [![License: MIT](https://cdn.prod.website-files.com/5e0f1144930a8bc8aace526c/65dd9eb5aaca434fac4f1c34_License-MIT-blue.svg)](/LICENSE)
 [![codecov](https://codecov.io/github/Trenrod/HostingTemplate/graph/badge.svg?token=RPN5KMKI2V)](https://codecov.io/github/Trenrod/HostingTemplate)
 
-Simple, transparent and reliable service deployments.
+Simple, transparent and reliable service deployments for Debian 12/Bookworm servers.
 
 ## Usage
 
@@ -49,9 +48,9 @@ npx tsx index.ts audit ./config_hello_world.json
 Security
 - [x] Apply [DevSec Security OS Hardening](https://github.com/dev-sec/ansible-collection-hardening)
 - [x] [Automate security updates using unattended-upgrades](https://galaxy.ansible.com/ui/repo/published/hifis/toolkit/content/role/unattended_upgrades/)
-- [x] Applies audits for each iniital setup
-	- [x] [Lynis audit](https://cisofy.com/lynis/#introduction) (Score: 77/100) on Debian 12
-	- [x] [Docker bench security](https://github.com/docker/docker-bench-security) (Score: 29/100) on Debian 12
+- [ ] Increase audits score
+	- [ ] Increase [Lynis audit](https://cisofy.com/lynis/#introduction) score. Currently 77/100 on Debian 12
+	- [ ] Increase [Docker bench security](https://github.com/docker/docker-bench-security) score. Currently 29/100 on Debian 12
 - [x] Install/Configure [Linux auditd framework](https://linux.die.net/man/8/auditd)
 - [x] Applies patches according to Audit results `./ansible/tasks/security/*.yaml`
 

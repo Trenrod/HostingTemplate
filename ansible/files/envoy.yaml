@@ -59,4 +59,4 @@ static_resources:
                   address:
                     socket_address:
                       address: mainapp
-                      port_value: 8008
+                      port_value: 8000

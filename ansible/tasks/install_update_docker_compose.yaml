@@ -1,0 +1,29 @@
+# Updates the docker compose on the provisioned service
+
+---
+
+- name: "Set variables"
+  ansible.builtin.set_fact:
+    timestamp_readable: "{{ lookup('pipe', 'date +%Y%m%d%H%M%S') }}"
+    docker_user: "docker_user"
+    remote_config_dir: "/home/docker_user/hosting-template"
+    docker_compose_project_name: "{{ fqdn | replace('.', '_') }}"
+
+- name: "Checks required variables are defined"
+  ansible.builtin.import_tasks: ./tasks/checks_deploy_variables.yaml
+
+- name: "Copy current docker compose to remote host"
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/generic/docker-compose.yaml"
+    dest: "{{ remote_config_dir }}/docker-compose.yaml"
+    owner: "{{ docker_user }}"
+    group: "{{ docker_user }}"
+    mode: "0440"
+  become: true
+
+- name: "Start docker compose"
+  community.docker.docker_compose_v2:
+    project_name: "{{ docker_compose_project_name }}"
+    project_src: "{{ remote_config_dir }}"
+    state: restarted
+  become: true
