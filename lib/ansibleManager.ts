@@ -56,6 +56,9 @@ export const spawnAnsibleProvision = async function(config: TConfig): Promise<nu
 	// Variables
 	parameter.push("--extra-vars");
 	parameter.push(`fqdn=${config.fqdn}`);
+	parameter.push("--extra-vars");
+	parameter.push(`dockerComposeFilePath=${config.dockerComposeFilePath}`);
+
 	parameter.push("provision.yaml");
 	return await spawnAnsible(command, parameter, config.fqdn);
 }
@@ -71,6 +74,8 @@ export const spawnAnsibleUpdate = async function(config: TConfig): Promise<numbe
 	// Variables
 	parameter.push("--extra-vars");
 	parameter.push(`fqdn=${config.fqdn}`);
+	parameter.push("--extra-vars");
+	parameter.push(`dockerComposeFilePath=${config.dockerComposeFilePath}`);
 
 	parameter.push("update.yaml");
 	return await spawnAnsible(command, parameter, config.fqdn);

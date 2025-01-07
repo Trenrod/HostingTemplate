@@ -31,8 +31,9 @@ export const generateConfig = async function(pathToConfig: string): Promise<void
 	const fqdn = await input({ message: 'FQDN of the service. To create certificates for.', default: config?.fqdn });
 	const email = await input({ message: 'Your email for Let`s encrypt.', default: config?.email });
 	const sshKeyPath = await input({ message: 'Path to the ssh key to connect to your host.', default: config?.sshKeyPath });
+	const dockerComposeFilePath = await input({ message: 'Path to the docker compose file.', default: config?.dockerComposeFilePath });
 
-	const newConfig: TConfig = { fqdn, email, sshKeyPath };
+	const newConfig: TConfig = { fqdn, email, sshKeyPath, dockerComposeFilePath };
 
 	await saveConfig(pathToConfig, newConfig);
 	console.log(`New config stored to: ${pathToConfig}`);

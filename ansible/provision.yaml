@@ -1,105 +1,67 @@
-- name: Deployment
+# Provision host and desploys docker compose file
+
+---
+
+- name: Provision
   hosts: main
 
   tasks:
     - name: "Set variables"
       ansible.builtin.set_fact:
         timestamp_readable: "{{ lookup('pipe', 'date +%Y%m%d%H%M%S') }}"
+        docker_user: "docker_user"
+        remote_config_dir: "/home/docker_user/hosting-template"
+        docker_compose_project_name: "{{ fqdn | replace('.', '_') }}"
 
     - name: "Checks required variables are defined"
       ansible.builtin.import_tasks: ./tasks/checks_deploy_variables.yaml
 
-    - name: "Upgrade system"
-      ansible.builtin.import_tasks: ./tasks/setup_upgrade_system.yaml
-      become: true
+    - name: "Create users, groups and directories"
+      ansible.builtin.import_tasks: ./tasks/setup_users_groups_folders.yaml
 
-    - name: "Setup firewall"
-      ansible.builtin.import_tasks: ./tasks/setup_firewall.yaml
-      become: true
-
-    - name: "Setup docker an docker-compose"
-      ansible.builtin.import_tasks: ./tasks/setup_docker.yaml
-      become: true
-
-    - name: "Setup auditd"
-      ansible.builtin.import_tasks: "./tasks/setup_auditd.yaml"
-      become: true
-
-    - name: "Apply all security specific configuration changes"
-      ansible.builtin.import_tasks: "./tasks/apply_security.yaml"
-      become: true
-
-    - name: "Dev Sec - Security OS Hardening"
-      ansible.builtin.include_role:
-        name: devsec.hardening.os_hardening
-      vars:
-        ansible_become: true
-        sysctl_overwrite:
-          # Enable IPv4 traffic forwarding. For Docker
-          net.ipv4.ip_forward: 1
-
-    - name: "Setup unattended-upgrades"
-      ansible.builtin.include_role:
-        name: hifis.toolkit.unattended_upgrades
-      vars:
-        ansible_become: true
-
-    # vvv---- TODO
-
-    # - name: "Setup certificates"
-    #   ansible.builtin.import_tasks: "./tasks/setup_certificates.yaml"
+    # - name: "Upgrade system"
+    #   ansible.builtin.import_tasks: ./tasks/setup_upgrade_system.yaml
     #   become: true
 
-    # - name: "Load variables"
-    #   ansible.builtin.include_vars: "variables.yaml"
-
-    # - name: "Fail if no 'email' is provided"
-    #   ansible.builtin.fail: msg="Please provide 'email' parameter"
-    #   when: email is undefined
-
-    # - name: "fail if no 'domain' is provided"
-    #   ansible.builtin.fail: msg="please provide 'domain' parameter"
-    #   when: domain is undefined
-
-    # - name: "Set normal user home dir"
-    #   ansible.builtin.set_fact:
-    #     user_dir: "{{ansible_facts.user_dir}}"
-    #     user: "{{ansible_facts.user_id}}"
-
-    # - name: "Update apt"
-    #   ansible.builtin.apt:
-    #     update_cache: yes
+    # - name: "Setup firewall"
+    #   ansible.builtin.import_tasks: ./tasks/setup_firewall.yaml
     #   become: true
 
-    # - name: "Copy envoy script"
-    #   ansible.builtin.copy:
-    #     src: "{{ playbook_dir }}/files/envoy.yaml"
-    #     dest: "{{ user_dir }}/envoy.yaml"
-    #     owner: "{{ user }}"
-    #     group: "{{ user }}"
-    #     mode: "0444"
-
-    # - name: "Log into private registry and force re-authorization"
-    #   docker_login:
-    #     registry: ghcr.io
-    #     username: "{{ docker_user }}"
-    #     password: "{{ docker_password }}"
-    #     reauthorize: yes
-    #   no_log: true
+    # - name: "Setup docker an docker-compose"
+    #   ansible.builtin.import_tasks: ./tasks/setup_docker.yaml
     #   become: true
 
-    # - name: "Copy docker compose file"
-    #   ansible.builtin.template:
-    #     src: "{{ playbook_dir }}/files/compose.yaml.j2"
-    #     dest: "{{ user_dir }}/compose.yaml"
-    #     owner: "{{ user }}"
-    #     group: "{{ user }}"
-    #     mode: "0444"
-
-    # - name: "Start docker compose"
-    #   community.docker.docker_compose_v2:
-    #     project_name: heritage_archive
-    #     project_src: "{{ user_dir }}"
-    #     files: "compose.yaml"
-    #     state: present
+    # - name: "Setup auditd"
+    #   ansible.builtin.import_tasks: "./tasks/setup_auditd.yaml"
     #   become: true
+
+    # - name: "Apply all security specific configuration changes"
+    #   ansible.builtin.import_tasks: "./tasks/apply_security.yaml"
+    #   become: true
+
+    # - name: "Dev Sec - Security OS Hardening"
+    #   ansible.builtin.include_role:
+    #     name: devsec.hardening.os_hardening
+    #   vars:
+    #     ansible_become: true
+    #     sysctl_overwrite:
+    #       # Enable IPv4 traffic forwarding. For Docker
+    #       net.ipv4.ip_forward: 1
+
+    # - name: "Setup unattended-upgrades"
+    #   ansible.builtin.include_role:
+    #     name: hifis.toolkit.unattended_upgrades
+    #   vars:
+    #     ansible_become: true
+
+    - name: "Copy envoy script"
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/files/envoy.yaml"
+        dest: "{{ remote_config_dir }}/envoy/envoy.yaml"
+        owner: "{{ docker_user }}"
+        group: "{{ docker_user }}"
+        mode: "0444"
+      become: true
+
+    - name: "Install update docker compose"
+      ansible.builtin.import_tasks: "./tasks/install_update_docker_compose.yaml"

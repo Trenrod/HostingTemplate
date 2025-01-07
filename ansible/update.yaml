@@ -1,2 +1,20 @@
-# Updates the docker compose on the provisioned service
+# Update host and desploys docker compose file
+
 ---
+
+- name: Update
+  hosts: main
+
+  tasks:
+    - name: "Set variables"
+      ansible.builtin.set_fact:
+        timestamp_readable: "{{ lookup('pipe', 'date +%Y%m%d%H%M%S') }}"
+        docker_user: "docker_user"
+        remote_config_dir: "/home/docker_user/hosting-template"
+        docker_compose_project_name: "{{ fqdn | replace('.', '_') }}"
+
+    - name: "Checks required variables are defined"
+      ansible.builtin.import_tasks: ./tasks/checks_deploy_variables.yaml
+
+    - name: "Install update docker compose"
+      ansible.builtin.import_tasks: "./tasks/install_update_docker_compose.yaml"

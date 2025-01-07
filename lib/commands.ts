@@ -1,5 +1,5 @@
 import { generateAnsibleInventoryFile } from "./ansibleInventory";
-import { spawnAnsibleAudit, spawnAnsibleProvision } from "./ansibleManager";
+import { spawnAnsibleAudit, spawnAnsibleProvision, spawnAnsibleUpdate } from "./ansibleManager";
 import type { TConfig } from "./config"
 
 export const applyCommandProvision = async function(config: TConfig): Promise<void> {
@@ -24,7 +24,7 @@ export const applyCommandUpdate = async function(config: TConfig): Promise<void>
 	console.log("Inventory:", inventoryData);
 
 	// Execute ansible script check 
-	const ansibleCheckResult = await spawnAnsibleAudit(config);
+	const ansibleCheckResult = await spawnAnsibleUpdate(config);
 
 	const SuccessCheckResult = 0;
 	if (ansibleCheckResult !== SuccessCheckResult) {

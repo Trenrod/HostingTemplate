@@ -6,15 +6,15 @@ const schema = {
 	properties: {
 		fqdn: {
 			type: "string",
-			// format: "hostname"
 		},
 		sshKeyPath: {
 			type: "string",
-			// format: "uri"
 		},
 		email: {
 			type: "string",
-			// format: "email"
+		},
+		dockerComposeFilePath: {
+			type: "string"
 		}
 	},
 	additionalProperties: false

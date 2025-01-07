@@ -1,0 +1,28 @@
+# Creates dedicates users, groups and folders used by multiple playbooks
+---
+- name: "Create docker related user 'docker_user'"
+  ansible.builtin.user:
+    name: "{{ docker_user }}"
+    shell: /bin/bash
+    createhome: true
+  become: true
+
+- name: "Add user to docker group"
+  ansible.builtin.user:
+    name: "{{ docker_user }}"
+    groups: docker
+    append: true
+  become: true
+
+- name: "Create docker specific directory for configurations"
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: "directory"
+    owner: "{{ docker_user }}"
+    group: "{{ docker_user }}"
+    mode: "0700"
+    recurse: false
+  loop:
+    - "{{ remote_config_dir }}"
+    - "{{ remote_config_dir }}/envoy"
+  become: true

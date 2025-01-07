@@ -4,3 +4,8 @@
   ansible.builtin.fail:
     msg: "The variable 'fqdn' is not defined."
   when: fqdn is not defined
+
+- name: "Check if dockerComposeFilePath is defined"
+  ansible.builtin.fail:
+    msg: "The variable 'dockerComposeFilePath' is not defined."
+  when: dockerComposeFilePath is not defined

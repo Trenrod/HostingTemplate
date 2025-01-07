@@ -1,0 +1,24 @@
+services:
+  mainapp:
+    image: "trenrod/anonymous-voting:0.0.1"
+    container_name: mainapp
+    ports:
+      - "8000:4321"
+    restart: unless-stopped
+
+  envoy:
+    image: envoyproxy/envoy:v1.31-latest
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - 443:443
+    depends_on:
+      - mainapp
+    volumes:
+      - /home/docker_user/hosting-template/envoy/envoy.yaml:/etc/envoy/envoy.yaml"
+      - /etc/ssl/certs/{{fqdn}}/server.key:/etc/envoy/certs/serverkey.pem
+      - /etc/ssl/certs/{{fqdn}}/serverfullchain.crt:/etc/envoy/certs/servercert.pem
+    container_name: envoy
+    restart: unless-stopped
+    links:
+      - mainapp
