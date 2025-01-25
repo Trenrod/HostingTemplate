@@ -2,5 +2,8 @@
 	"yaml.schemas": {
 		"https://raw.githubusercontent.com/ansible/ansible-lint/main/src/ansiblelint/schemas/ansible.json#/$defs/playbook": "file:///home/ado/dev/hosting-template/ansible/deploy.yaml"
 	},
-	"ansible.python.interpreterPath": "/home/ado/dev/hosting-template/ansible/.venv/bin/python3"
+	"ansible.python.interpreterPath": "/home/ado/dev/hosting-template/ansible/.venv/bin/python3",
+	"gopls": {
+		"ui.semanticTokens": true
+	}
 }

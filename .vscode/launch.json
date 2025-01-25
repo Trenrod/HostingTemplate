@@ -5,17 +5,16 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"type": "node",
+			"name": "Provision anonvoting.trenrod.net",
+			"type": "go",
 			"request": "launch",
-			"name": "Debug",
-			"skipFiles": [
-				"<node_internals>/**"
-			],
-			"program": "${workspaceFolder}/index.ts",
-			"runtimeArgs": [
-				"--experimental-strip-types",
-				"--experimental-transform-types"
-			],
+			"mode": "debug",
+			"program": "${workspaceFolder}/main.go",
+			"args": [
+				"host",
+				"provision",
+				"configs/anonvoting.trenrod.net.json"
+			]
 		}
 	]
 }

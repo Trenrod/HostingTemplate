@@ -94,3 +94,8 @@ Application
 ## Provisioning flow
 
 TODO
+
+Switch to `GO`
+- CLI Framework: https://github.com/spf13/cobra
+- JSON validator: https://github.com/go-playground/validator/blob/master/_examples/simple/main.go
+- Certificates: https://github.com/go-acme/lego
