@@ -14,34 +14,33 @@ Simple, transparent and reliable service deployments for Debian 12/Bookworm serv
 
 ### Step: 1 Generate step by step config file
 ```sh
-npx tsx index.ts config init ./config_hello_world.json
+go run main.go config generate ./config_hello_world.json
 ```
 
 ### Step: 2 Provision host
 ```sh
-npx tsx index.ts provision ./config_hello_world.json
+go run main.go host provision ./config_hello_world.json
 ```
 
 ### Step: 3 Update new version
 ```shell
-npx tsx index.ts update ./configs/anonvoting.trenrod.net
+go run main.go host update ./config_hello_world.json
 ```
 
 ### (Optional) Show config
 ```shell
-npx tsx index.ts config show ./config_hello_world.json
+go run main.go config show ./config_hello_world.json
 ```
 
 ### (Optional) Update config (same as create new one)
 ```shell
-npx tsx index.ts config init ./config_hello_world.json
+go run main.go config generate ./config_hello_world.json
 ```
 
 ### (Optional) Execute audits
 ```shell
-npx tsx index.ts audit ./config_hello_world.json
+go run main.go host audit ./config_hello_world.json
 ```
-
 
 ## Main features
 
@@ -72,7 +71,7 @@ Application
 - DNS A record
 
 ### Deployment server
-- NodeJS environment
+- Go environment
 - Ansible environment
 
 ## [Develop](docs/Develop.md)
@@ -82,10 +81,9 @@ Application
 ## Tech stack
 
 - Ansible
-- Let`s Encrypt
+- Let`s Encrypt (Acme.sh -> TODO go https://github.com/go-acme/lego)
 - Envoy
-- Acme.sh
-- NodeJS Typescript
+- Go
 
 ## System diagram
 
