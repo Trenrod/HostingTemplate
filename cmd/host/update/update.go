@@ -2,6 +2,8 @@ package update
 
 import (
 	"fmt"
+	"trenrod/HostingTemplate/internal/ansible"
+	"trenrod/HostingTemplate/internal/config"
 
 	"github.com/spf13/cobra"
 )
@@ -11,14 +13,11 @@ var HostUpdateCmd = &cobra.Command{
 	Short: "Updates host and its services",
 	Run: func(cmd *cobra.Command, args []string) {
 		pathToConfigFile := args[0]
-		fmt.Println("TODO host update ", pathToConfigFile)
-		// .then(async (loadConfigResult) => {
-		// 	if (loadConfigResult.result == null) {
-		// 		return;
-		// 	}
-		// 	console.log("Configuration:", loadConfigResult.result);
-		// 	await applyCommandProvision(loadConfigResult.result);
-		// })
-		// .catch((error: unknown) => { console.error("Unhandeled exception", error) });
+		fmt.Println("Start update of ", pathToConfigFile)
+		configuration := config.LoadConfig(pathToConfigFile)
+		// Generate inventory file
+		ansible.GenerateAnsibleInventoryFile(configuration)
+		// Execture update script
+		ansible.SpawnAnsibleUpdate(configuration)
 	},
 }

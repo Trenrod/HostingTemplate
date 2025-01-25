@@ -81,11 +81,6 @@ func spawAnsible(command string, parameter []string, fqdn string) {
 	}
 }
 
-/**
- * Starts deployment over ansible
- *
- * @returns ansible output
- */
 // SpawnAnsibleProvision, spawns a new ansible provisioning process
 // Parameters:
 // - config: the configuration of this deployment
@@ -104,36 +99,38 @@ func SpawnAnsibleProvision(configuration config.Configuration) {
 	spawAnsible(command, parameter, configuration.FQDN)
 }
 
-// /**
-//  * Updates service on a provisioned host
-//  *
-//  * @returns ansible output
-//  */
-// export const spawnAnsibleUpdate = async function(config: TConfig): Promise<number | null> {
-// 	const command = ".venv/bin/ansible-playbook";
-// 	const parameter = ["-i", "inventory.yaml"]
-// 	// Variables
-// 	parameter.push("--extra-vars");
-// 	parameter.push(`fqdn=${config.fqdn}`);
-// 	parameter.push("--extra-vars");
-// 	parameter.push(`dockerComposeFilePath=${config.dockerComposeFilePath}`);
+// SpawnAnsibleUpdate, spawns a new ansible update process
+// Parameters:
+// - config: the configuration of this deployment
+func SpawnAnsibleUpdate(configuration config.Configuration) {
+	command := ".venv/bin/ansible-playbook"
+	parameter := []string{"-i", "inventory.yaml"}
+	// Variables
+	parameter = append(parameter,
+		"--extra-vars",
+		fmt.Sprintf("fqdn=%s", configuration.FQDN),
+		"--extra-vars",
+		fmt.Sprintf("dockerComposeFilePath=%s", configuration.DockerComposeFilePath),
+	)
+	parameter = append(parameter, "update.yaml")
 
-// 	parameter.push("update.yaml");
-// 	return await spawnAnsible(command, parameter, config.fqdn);
-// }
+	spawAnsible(command, parameter, configuration.FQDN)
+}
 
-// /**
-//  * Starts ansible to collect information from the host system
-//  *
-//  * @returns ansible output
-//  */
-// export const spawnAnsibleAudit = async function(config: TConfig): Promise<number | null> {
-// 	const command = ".venv/bin/ansible-playbook";
-// 	const parameter = ["-i", "inventory.yaml"]
-// 	// Variables
-// 	parameter.push("--extra-vars");
-// 	parameter.push(`fqdn=${config.fqdn}`);
+// SpawnAnsibleAudit, spawns a new ansible audit process
+// Parameters:
+// - config: the configuration of this deployment
+func SpawnAnsibleAudit(configuration config.Configuration) {
+	command := ".venv/bin/ansible-playbook"
+	parameter := []string{"-i", "inventory.yaml"}
+	// Variables
+	parameter = append(parameter,
+		"--extra-vars",
+		fmt.Sprintf("fqdn=%s", configuration.FQDN),
+		"--extra-vars",
+		fmt.Sprintf("dockerComposeFilePath=%s", configuration.DockerComposeFilePath),
+	)
+	parameter = append(parameter, "audit.yaml")
 
-// 	parameter.push("audit.yaml");
-// 	return await spawnAnsible(command, parameter, config.fqdn);
-// }
+	spawAnsible(command, parameter, configuration.FQDN)
+}

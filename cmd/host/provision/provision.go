@@ -15,6 +15,9 @@ var HostProvisionCmd = &cobra.Command{
 		pathToConfigFile := args[0]
 		fmt.Println("Start provisioning of ", pathToConfigFile)
 		configuration := config.LoadConfig(pathToConfigFile)
-		ansible.ApplyCommandProvision(configuration)
+		// Generate inventory file
+		ansible.GenerateAnsibleInventoryFile(configuration)
+		// Execture provisioner script
+		ansible.SpawnAnsibleProvision(configuration)
 	},
 }

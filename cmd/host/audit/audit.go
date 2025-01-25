@@ -2,25 +2,22 @@ package audit
 
 import (
 	"fmt"
+	"trenrod/HostingTemplate/internal/ansible"
+	"trenrod/HostingTemplate/internal/config"
 
 	"github.com/spf13/cobra"
 )
 
 var HostAuditCmd = &cobra.Command{
 	Use:   "audit [pathToConfigFile]",
-	Short: "Checks endpoints and their configuration",
+	Short: "Applies audit scripts on endpoints",
 	Run: func(cmd *cobra.Command, args []string) {
 		pathToConfigFile := args[0]
-		fmt.Println("TODO host audit ", pathToConfigFile)
-		// 	console.log(`Configuration file used: ${argPathToConfig}`);
-		// 	loadConfig(argPathToConfig)
-		// 		.then(async (loadConfigResult) => {
-		// 			if (loadConfigResult.result == null) {
-		// 				return;
-		// 			}
-		// 			console.log("Configuration:", loadConfigResult.result);
-		// 			await applyCommandAudit(loadConfigResult.result)
-		// 		})
-		// 		.catch((error: unknown) => { console.error("Unhandeled exception", error) });
+		fmt.Println("Start audit of ", pathToConfigFile)
+		configuration := config.LoadConfig(pathToConfigFile)
+		// Generate inventory file
+		ansible.GenerateAnsibleInventoryFile(configuration)
+		// Execture audit script
+		ansible.SpawnAnsibleAudit(configuration)
 	},
 }
